@@ -186,6 +186,11 @@ class IPerf3(object):
         self.lib.iperf_run_server.argtypes = (c_void_p,)
         self.lib.iperf_reset_test.restype = None
         self.lib.iperf_reset_test.argtypes = (c_void_p,)
+        # add TsoS Support
+        self.lib.iperf_get_test_tos.restype = c_int
+        self.lib.iperf_get_test_tos.argtypes = (c_void_p,)
+        self.lib.iperf_set_test_tos.restype = None
+        self.lib.iperf_set_test_tos.argtypes = (c_void_p, c_int,)        
 
         try:
             # Only available from iperf v3.1 and onwards
@@ -427,6 +432,7 @@ class Client(IPerf3):
         self._duration = None
         self._bandwidth = None
         self._protocol = None
+        self._tos = None
 
     @property
     def server_hostname(self):
@@ -559,6 +565,17 @@ class Client(IPerf3):
         self.lib.iperf_set_test_num_streams(self._test, number)
         self._num_streams = number
 
+    @property
+    def tos(self):
+        """ToS Value"""
+        self._tos = self.lib.iperf_get_test_tos(self._test)
+        return self._tos
+
+    @tos.setter
+    def tos(self, tos):
+        self.lib.iperf_set_test_tos(self._test, tos)
+        self._tos = tos
+        
     @property
     def zerocopy(self):
         """Toggle zerocopy.

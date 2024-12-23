@@ -111,6 +111,11 @@ class TestPyPerf:
         client.num_streams = 666
         assert client.num_streams == 666
 
+    def test_tos(self):
+        client = iperf3.Client()
+        client.tos = 26
+        assert client.tos == 26
+
     def test_json_output_enabled(self):
         client = iperf3.Client()
         client.json_output = True
